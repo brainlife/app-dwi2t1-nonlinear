@@ -2,7 +2,10 @@
 
 t1=$1
 dwi=$2
-outdir=$3
+transformdir=$3
+workdir=$4
+
+outdir=$(pwd)
 
 if [[ -z $t1 || ! -e $t1.nii.gz ]]; then
     echo "Missing T1 $t1.nii.gz"
@@ -17,11 +20,14 @@ if [[ -z $dwi || ! -e $dwi.nii.gz || \
 fi
 dwi=$(pwd)/$dwi
 
-if [[ -z $outdir ]]; then 
-    outdir=output
+if [[ -z $transformdir ]]; then
+    transformdir=output
 fi
-outdir=$(pwd)/$outdir
+transformdir=$(pwd)/output
 
+if [[ -z $workdir ]]; then
+    workdir=workdir
+fi
 workdir=$(pwd)/workdir
 mkdir -p $workdir
 cd $workdir
@@ -81,7 +87,6 @@ c3d_affine_tool -itk ${nm}0GenericAffine.txt -ref $f \
     -src $m  -ras2fsl -o ${nm}0GenericAffine_fsl.txt
 
 #apply affine+nonlinear to DWI
-mkdir -p $outdir
 antsApplyTransforms -e $dim -i dwi_corrected.nii.gz -r $f \
     -t ${nm}0GenericAffine.mat -t ${nm}1Warp.nii.gz \
     -o $outdir/dwi.nii.gz
@@ -93,7 +98,10 @@ cp dwi_corrected.bval $outdir/dwi.bvals
 
 cd $outdir
 if [[ -e dwi.nii.gz && -e dwi.bvals && -e dwi.bvecs ]]; then
-    rm -rf $workdir
+    mkdir -p $transformdir
+    mv ${nm}0GenericAffine.mat $transformdir/affine_ANTs.mat
+    mv ${nm}1Warp.nii.gz $transformdir/warp_ANTs.nii.gz
+    mv ${nm}1InverseWarp.nii.gz $transformdir/warp-inverse_ANTs.nii.gz
     exit 0
 else
     exit 1

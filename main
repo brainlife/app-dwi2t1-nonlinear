@@ -76,7 +76,7 @@ fi
 bids_sub=sub-$sub
 
 #clean up previous job (just in case)
-rm -rf output input
+rm -rf input workdir output
 
 bidst1=$(copy_to_bids anat T1w t1)
 bidsdwi=$(copy_to_bids dwi dwi dwi)
@@ -88,13 +88,11 @@ fi
 
 singularity run -e \
     docker://katealpert/dwi2t1-nonlinear:v0 \
-    /bin/bash dwi2t1.sh $bidst1 $bidsdwi output
+    /bin/bash ./dwi2t1.sh $bidst1 $bidsdwi output workdir
 res=$?
 
 if [[ $res == 0 ]]; then
-    rm -rf input
-    mv output/* .
-    rm -rf output
+    rm -rf input workdir
 fi
 
 #exit code from the last command (singularity) will be used.
