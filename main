@@ -56,8 +56,8 @@ function copy_to_bids {
     if [[ $sdir == dwi ]]; then
         if ! check_required_fields $outnm.json; then
             msg="TotalReadoutTime and PhaseEncodingDirection BIDS fields reqd "
-            msg+="to run mrtrix3_connectome preproc. Missing for ${!vname}"
-            echo $msg
+            msg+="to run mrtrix3 dwipreproc. Missing for ${!vname}"
+            echo $msg >&2
             exit 1
         fi
         for meta in bvec bval; do
@@ -80,6 +80,11 @@ rm -rf output input
 
 bidst1=$(copy_to_bids anat T1w t1)
 bidsdwi=$(copy_to_bids dwi dwi dwi)
+
+if [[ -z $bidst1 || -z $bidsdwi ]]; then
+    echo "Missing or invalid input images"
+    exit 1
+fi
 
 singularity run -e \
     docker://katealpert/dwi2t1-nonlinear:v0 \
