@@ -86,8 +86,10 @@ singularity run -e \
     /bin/bash dwi2t1.sh $bidst1 $bidsdwi output
 res=$?
 
-if [[ -d output && $res == 0 ]]; then
+if [[ $res == 0 ]]; then
     rm -rf input
+    mv output/* .
+    rm -rf output
 fi
 
 #exit code from the last command (singularity) will be used.
