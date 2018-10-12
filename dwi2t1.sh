@@ -96,7 +96,8 @@ cp dwi_corrected.bval $outdir/dwi.bvals
 /opt/HCPpipelines/global/scripts/Rotate_bvecs.sh dwi_corrected.bvec \
     ${nm}0GenericAffine_fsl.txt $outdir/dwi.bvecs
 
-if [[ -e dwi.nii.gz && -e dwi.bvals && -e dwi.bvecs ]]; then
+if [[ -e $outdir/dwi.nii.gz && \
+    -e $outdir/dwi.bvals && -e $outdir/dwi.bvecs ]]; then
     mkdir -p $transformdir
     mv ${nm}0GenericAffine.mat $transformdir/affine_ANTs.mat
     mv ${nm}1Warp.nii.gz $transformdir/warp_ANTs.nii.gz
