@@ -23,12 +23,12 @@ dwi=$(pwd)/$dwi
 if [[ -z $transformdir ]]; then
     transformdir=output
 fi
-transformdir=$(pwd)/output
+transformdir=$(pwd)/$transformdir
 
 if [[ -z $workdir ]]; then
     workdir=workdir
 fi
-workdir=$(pwd)/workdir
+workdir=$(pwd)/$workdir
 mkdir -p $workdir
 cd $workdir
 
